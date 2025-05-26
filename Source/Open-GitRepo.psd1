@@ -3,7 +3,7 @@
     RootModule             = "Open-GitRepo.psm1"
 
     # Version number of this module.
-    ModuleVersion          = '0.0.8'
+    ModuleVersion          = '0.0.9'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -77,7 +77,13 @@
     # VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport        = @()
+    AliasesToExport        = @(
+        'ogr',
+        'git-open',
+        'gitopen',
+        'git-browse',
+        'gitbrowse'
+    )
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -117,7 +123,7 @@
             ReleaseNotes               = 'Initial release'
 
             # Prerelease string of this module
-            Prerelease                 = ''
+            # Prerelease                 = ''
 
             # Flag to indicate whether the module requires explicit user acceptance for install/update/save
             RequireLicenseAcceptance   = $true

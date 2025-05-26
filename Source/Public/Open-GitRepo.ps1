@@ -56,13 +56,15 @@ function Open-GitRepo {
 
     .LINK
         https://github.com/jhavenz/open-gitrepo
+        https://github.com/jhavenz/open-gitrepo/blob/main/Source/en-US/about_Open-GitRepo.help.txt
+
     #>
     [Alias('ogr', 'git-open', 'gitopen', 'git-browse', 'gitbrowse')]
     [CmdletBinding(DefaultParameterSetName = 'Path')]
     param(
-        [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Path')]
+        [Parameter(Position = 0, ParameterSetName = 'Path', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$Path,
-        [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Url')]
+        [Parameter(Position = 0, ParameterSetName = 'Url', ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$Url,
         [Parameter(Position = 1)]
         [string]$Branch
@@ -140,17 +142,12 @@ function Open-GitRepo {
             }
             
             $targetUrl = Get-RepoWebUrl -RemoteUrl $url -Branch $branch
-
-            if (-not $targetUrl) {
-                return
-            }
+            if (-not $targetUrl) {return}
         }
         if (-not $targetUrl) {
             Write-Error "Could not determine repository URL. Please provide a valid path or URL."
             return
         }
         Start-Process $targetUrl
-    }
-    end {
     }
 }

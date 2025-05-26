@@ -18,9 +18,9 @@ else {
 Write-Output "Module build succeeded..."
 
 $argz = @{
-    Name        = "$PSScriptRoot/Output/Open-GitRepo/Open-GitRepo.psm1"
     NuGetApiKey = $env:NugetApiKey
     Verbose     = $PSBoundParameters.ContainsKey('Verbose')
+    Name        = "$PSScriptRoot/Output/Open-GitRepo/Open-GitRepo.psm1"
 }
 
 
