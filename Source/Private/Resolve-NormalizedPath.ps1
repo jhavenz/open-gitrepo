@@ -5,7 +5,6 @@ function Resolve-NormalizedPath {
         [string]$BasePath = (Get-Location).Path
     )
 
-    # Expand tilde to home directory
     if ($Path -like '~*') {
         $Path = $Path -replace '^~', $env:HOME
     }

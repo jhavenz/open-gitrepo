@@ -29,10 +29,6 @@ function Get-GitBranchWithCommitHash {
             return $null
         }
 
-
-        # build up a url which contains the branch name and commit hash, e.g.
-        # https://bitbucket.org/mybbworkspace/mybbrepo/src/acc31fe8745678bc987b123d87d7ac72fec220e52/?at=hotfix%2Fmy-test-branch
-
         return $targetBranch
     }
     finally {

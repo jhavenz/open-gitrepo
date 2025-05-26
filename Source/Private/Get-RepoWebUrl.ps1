@@ -16,7 +16,7 @@ function Get-RepoWebUrl {
         $uri = [uri]::new($url)
     }
     catch {
-        # check the ssh profiles for an alias used on the remote
+        # check for ssh profile alias(es)
         if ($RemoteUrl -match '^git@([^:]+):') {
             $sshAlias = $Matches[1]
             $hostName = Get-SshAliasHostnameUrl -SshAlias $sshAlias
@@ -46,8 +46,13 @@ function Get-RepoWebUrl {
             return "https://github.com$path/tree/$Branch"
         }
         'bitbucket.org' {
-            # use `git for-each-ref --format='%(refname:short)|%(objectname)' refs/heads/` to list out (branch|commit_hash) pairs
-            # use `git config --list | ? {$_ -like 'branch.*.merge=*'} | Select-Object -First 1 | ForEach-Object {$_ -replace '^(.+)=(refs/heads/)?', ''}` to know whether we're working with the primary branch or not
+            # Bitbucket URL examples:
+            # 
+            # Default branch:
+            # https://bitbucket.org/bbworkspace/customrepo/src/main
+            #
+            # Secondary branch:
+            # https://bitbucket.org/mybbworkspace/mybbrepo/src/acc31fe8745678bc987b123d87d7ac72fec220e52/?at=hotfix%2Fmy-test-branch
 
             $primaryBranch = Get-PrimaryGitBranch
 
@@ -55,8 +60,6 @@ function Get-RepoWebUrl {
                 $path = $uri.AbsolutePath.TrimEnd('.git')
                 return "https://bitbucket.org$path/src/$Branch"
             }
-
-            # if primary branch, we don't need to specifi
 
             $branchWithHash = Get-GitBranchWithCommitHash 
 
