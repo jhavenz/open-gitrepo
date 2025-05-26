@@ -17,7 +17,7 @@ Describe 'Open-GitRepo' {
                 $script:errorOutput += $message
             }
 
-            $actualGetContent = { Get-Content }.GetNewClosure()
+            $getActualContent = { param($p) Get-Content -Path $p }.GetNewClosure()
             Mock Get-Content {
                 param($Path)
                 $p = Resolve-NormalizedPath [string]$Path
@@ -36,7 +36,7 @@ Describe 'Open-GitRepo' {
                     )
                 }
 
-                return $actualGetContent.Invoke($Path)
+                return & $getActualContent $Path
             }
 
             Mock Start-Process { 
