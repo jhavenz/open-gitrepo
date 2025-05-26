@@ -1,0 +1,101 @@
+TOPIC
+    about_OpenGitRepo
+
+SHORT DESCRIPTION
+    The OpenGitRepo module provides cross-platform commands to open Git repositories in your web browser directly from the PowerShell command line.
+
+LONG DESCRIPTION
+    The OpenGitRepo module contains the Open-GitRepo cmdlet which allows you to quickly open a GitHub or Bitbucket repository's web interface in your default browser. 
+    
+    This module works on Windows, macOS, and Linux, supporting both HTTPS and SSH remote URL formats. You can:
+    - Run the command in the current directory to open that repo
+    - Provide a local directory path (with -Path or via pipeline) to open that repo
+    - Provide a git remote URL (with -Url or via pipeline) to open that repo
+    
+    The command detects your current branch and opens that specific branch in the browser for local repositories. For remote URLs, it defaults to the 'main' branch.
+
+    The module simplifies the workflow of navigating between your local Git repository and its web-based interface, eliminating the need to manually copy/paste URLs or navigate through multiple clicks.
+
+    REQUIREMENTS:
+    - PowerShell 7.0 or later
+    - Git must be installed and available in your PATH
+    - For local paths, you must run the command from within a Git repository with an 'origin' remote configured
+
+PARAMETER DETAILS
+    -Path <String>
+        Specifies the local directory path to the Git repository. This parameter is optional if the command is run inside a Git repository.
+        
+        Examples:
+        # Open a specific repository by path
+        Open-GitRepo -Path '/path/to/your/repo'
+        
+        # Open using pipeline input
+        '/path/to/your/repo' | Open-GitRepo
+
+    -Url <String>
+        Specifies the remote URL of the Git repository. This can be used to open repositories that are not cloned locally.
+        
+        Examples:
+        # Open a repository using its HTTPS URL
+        Open-GitRepo -Url 'https://github.com/user/repo.git'
+        
+        # Open a repository using its SSH URL
+        'git@bitbucket.org:user/repo.git' | Open-GitRepo
+
+EXAMPLES
+    Example 1: Open the current repository in your browser (Windows/macOS/Linux)
+        PS C:\MyRepo> Open-GitRepo
+        PS /home/user/MyRepo> Open-GitRepo
+        PS /Users/username/MyRepo> Open-GitRepo
+        
+        Opens your default web browser to the current branch of the repository.
+
+    Example 2: Open a repository by path
+        PS> Open-GitRepo -Path /path/to/otherrepo
+        PS> '/path/to/otherrepo' | Open-GitRepo
+        
+        Opens the web page for the repository in the specified directory.
+
+    Example 3: Open a repository by remote URL
+        PS> Open-GitRepo -Url 'https://github.com/user/repo.git'
+        PS> 'git@bitbucket.org:user/repo.git' | Open-GitRepo
+        
+        Opens the web page for the provided remote URL (defaults to 'main' branch).
+
+    Example 4: Using an alias
+        PS> ogr
+        PS> 'https://github.com/user/repo.git' | ogr
+        
+        The 'ogr' alias provides a shorthand way to execute the same command on any platform.
+
+NOTE:
+    The command will determine the appropriate URL format based on whether your repository is hosted on GitHub or Bitbucket.
+    The module uses PowerShell's cross-platform Start-Process cmdlet to open the browser URL, which works on Windows, macOS, and Linux.
+    
+    Currently supported Git providers:
+    - GitHub (github.com)
+    - Bitbucket (bitbucket.org)
+
+TROUBLESHOOTING NOTE:
+    If you encounter errors:
+    1. Ensure you're inside a Git repository by running 'git status' (for local paths)
+    2. Verify the 'origin' remote exists with 'git remote -v'
+    3. Check that your Git installation is working properly
+    4. If using SSH URLs, ensure your SSH keys are properly configured
+    5. For remote URLs, ensure the URL is valid and public (or you have access)
+    
+    Platform-specific issues:
+    - Windows: Ensure your default browser is correctly set
+    - macOS: If your browser doesn't open, try running 'open <url>' manually
+    - Linux: The module attempts to use the most common methods to open URLs
+    
+    For additional help, visit the module's GitHub repository.
+
+SEE ALSO
+    - Git documentation: https://git-scm.com/doc
+    - GitHub documentation: https://docs.github.com
+    - Bitbucket documentation: https://support.atlassian.com/bitbucket-cloud/
+    - PowerShell Cross-Platform Help: https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell
+
+KEYWORDS
+    Git, GitHub, Bitbucket, Repository, Browser, Open, Remote, Branch, Cross-Platform, Windows, macOS, Linux
