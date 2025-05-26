@@ -1,7 +1,7 @@
 @{
-    ModuleManifest           = "$PSScriptRoot/OpenGitRepo.psd1"
+    ModuleManifest           = "$PSScriptRoot/Open-GitRepo.psd1"
     VersionedOutputDirectory = $false
-    CopyDirectories          = @('en-US')
+    CopyDirectories          = @('en-US', 'icon.png', './License.txt')
     Target                   = "CleanBuild"
     SourceDirectories        = @(
         "[Pp]rivate", "[Pp]ublic", "[Ee]nums", "[Cc]lasses"

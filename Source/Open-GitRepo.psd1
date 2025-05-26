@@ -1,9 +1,9 @@
 @{
     # Script module or binary module file associated with this manifest.
-    RootModule             = "OpenGitRepo.psm1"
+    RootModule             = "Open-GitRepo.psm1"
 
     # Version number of this module.
-    ModuleVersion          = '0.0.1'
+    ModuleVersion          = '0.0.8'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -18,7 +18,7 @@
     CompanyName            = 'jhavenz'
 
     # Copyright statement for this module
-    Copyright              = '(c) Jonathan Havens. All rights reserved.'
+    Copyright              = '(c) Jonathan Havens 2025. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description            = 'Open a browser to the current git repository'
@@ -64,7 +64,9 @@
     )
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport      = 'Open-GitRepo'
+    FunctionsToExport      = @(
+        #
+    )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport        = @(
@@ -75,7 +77,7 @@
     # VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport        = @('ogr','git-open','browse-repo')
+    AliasesToExport        = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -94,44 +96,43 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @(
+            Tags                       = @(
                 'git',
                 'github',
                 'bitbucket',
-                'open',
-                'repo',
-                'repository'
+                'git',
                 'git-open'
-                'browse repository'
             )
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri                 = 'https://github.com/jhavenz/open-gitrepo/tree/main/Lisense.txt'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri                 = 'https://github.com/jhavenz/open-gitrepo/tree/main'
 
             # A URL to an icon representing this module.
-            # IconUri = ''
+            IconUri                    = 'https://github.com/jhavenz/open-gitrepo/tree/main/icon.png'
 
             # ReleaseNotes of this module
-            # ReleaseNotes = ''
+            ReleaseNotes               = 'Initial release'
 
             # Prerelease string of this module
-            # Prerelease = ''
+            Prerelease                 = ''
 
             # Flag to indicate whether the module requires explicit user acceptance for install/update/save
-            # RequireLicenseAcceptance = $false
+            RequireLicenseAcceptance   = $true
 
             # External dependent modules of this module
-            # ExternalModuleDependencies = @()
+            ExternalModuleDependencies = @(
+                #
+            )
 
         } # End of PSData hashtable
 
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    # HelpInfoURI = ''
+    HelpInfoURI            = 'https://github.com/jhavenz/open-gitrepo/tree/main/en-US/about_Open-GitRepo.help.txt'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''

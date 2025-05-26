@@ -1,11 +1,11 @@
 TOPIC
-    about_OpenGitRepo
+    about_Open-GitRepo
 
 SHORT DESCRIPTION
-    The OpenGitRepo module provides cross-platform commands to open Git repositories in your web browser directly from the PowerShell command line.
+    The Open-GitRepo module provides cross-platform commands to open Git repositories in your web browser directly from the PowerShell command line.
 
 LONG DESCRIPTION
-    The OpenGitRepo module contains the Open-GitRepo cmdlet which allows you to quickly open a GitHub or Bitbucket repository's web interface in your default browser. 
+    The Open-GitRepo module contains the Open-GitRepo cmdlet which allows you to quickly open a GitHub or Bitbucket repository's web interface in your default browser. 
     
     This module works on Windows, macOS, and Linux, supporting both HTTPS and SSH remote URL formats. You can:
     - Run the command in the current directory to open that repo

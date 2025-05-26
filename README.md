@@ -12,6 +12,13 @@ Works seamlessly on Windows, macOS, and Linux.
 - Handles both HTTPS and SSH remote URL formats
 - Accepts a local path, a remote URL, or pipeline input
 - Works identically across Windows, macOS, and Linux
+- Test coverage (based on confidence, not line coverage)
+- Resolves ssh config aliases ()
+
+## Requirements
+
+- PowerShell 7.0 or later
+- Git must be installed and available in your PATH (Windows users can download [here](https://git-scm.com/downloads/win))
 
 ## Installation
 
@@ -28,6 +35,13 @@ Import the module within your current PowerShell session:
 ```powershell
 Import-Module Open-GitRepo
 ```
+
+_To have this module available in all your PowerShell sessions, you'll want to add it to your PowerShell profile. See the [Automatic Import/Add to PowerShell Profile](#automatic-importadd-to-powershell-profile) section below for details._
+
+> **A Note On Bitbucket Usage**
+
+> In other related packages, you'll notice the Bitbucket handling gets a little more complicated, which is because Bitbucket uses commit hashes in their URLs. They also have a different url for the 'default' branch, as opposed to any secondary branches.
+> **This module simplifies takes care of all this for you.** > **If it sees your remote URL is a Bitbucket repository, it will resolve the URL by looking up these details for you.**
 
 ### Open the current repository (default)
 
@@ -69,23 +83,9 @@ Pipeline input can also be used for remote URLs:
 'git@bitbucket.org:user/repo.git' | Open-GitRepo
 ```
 
-### Use the alias (works on all platforms)
+### Command Aliases
 
-Or, you can use the `git-open` alias
-
-> likely more familiar to those in the \*nix world - tip of the hat to [bash's git-open](https://github.com/jeffreyiacono/git-open)
-
-_from within a repository on your local machine:_
-
-```powershell
-git-open
-```
-
-\_or pipe to it
-
-```powershell
-'https://github.com/user/repo.git' | git-open
-```
+`ogr`, `git-open`, `gitopen`, `git-browse`, `gitbrowse`
 
 ## Automatic Import/Add to PowerShell Profile
 
@@ -111,16 +111,27 @@ code $PROFILE
 Import-Module Open-GitRepo
 ```
 
-## Supported Git Providers
+## SSH Config Aliases
 
-- GitHub (github.com)
-- Bitbucket (bitbucket.org)
+If your `~/.ssh/config` has entries that look something like this:
 
-## Requirements
+```plaintext
+Host gh-work
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_work
 
-- PowerShell 7.0 or later
-- Git must be installed and available in your PATH
-- For local paths, you must run the command from within a Git repository with an 'origin' remote configured
+Host gh-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_personal
+```
+
+Then you use a git remote that looks something like this: `origin git@gh-work:testuser/customrepo.git`.
+
+This works as you'd expect.
+
+This module knows how to resolve these SSH config aliases while generating the URL to your git repository.
 
 ## Troubleshooting
 
@@ -136,3 +147,19 @@ For more detailed help, see the module documentation with:
 ```powershell
 Get-Help Open-GitRepo -Full
 ```
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a new branch for your feature or fix
+3. Make your changes and commit them
+4. Push to your branch
+5. Create a pull request with a clear description of your changes
+   6, ensure your code has test coverage with passing tests
+6. Create a PR to merge into the `main` branch
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./Source/License.txt) file for details.
