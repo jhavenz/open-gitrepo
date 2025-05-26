@@ -55,9 +55,9 @@ function Open-GitRepo {
         Requires PowerShell 7+ and git in PATH.
 
     .LINK
-        https://github.com/jhavenz/OpenGitRepo
+        https://github.com/jhavenz/open-gitrepo
     #>
-    [Alias('ogr', 'git-open', 'browse-repo')]
+    [Alias('ogr', 'git-open', 'gitopen', 'git-browse', 'gitbrowse')]
     [CmdletBinding(DefaultParameterSetName = 'Path')]
     param(
         [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Path')]
@@ -65,99 +65,8 @@ function Open-GitRepo {
         [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Url')]
         [string]$Url,
         [Parameter(Position = 1)]
-        [string]$Branch = 'main'
+        [string]$Branch
     )
-
-    begin {
-        function Get-GitRemoteAndBranch {
-            param([string]$TargetPath)
-            $remoteUrl = git -C $TargetPath remote get-url origin 2>$null
-            if (-not $remoteUrl) {
-                Write-Error "Could not retrieve remote 'origin' URL. Are you in a git repository with an 'origin' remote?"
-                return $null
-            }
-            $currentBranch = git -C $TargetPath rev-parse --abbrev-ref HEAD 2>$null
-            if (-not $currentBranch) {
-                Write-Error "Could not retrieve current branch. Are you in a git repository?"
-                return $null
-            }
-            return @{ Url = $remoteUrl; Branch = $currentBranch }
-        }
-
-        function Get-SshAliasHostnameUrl {
-            param([string]$SshAlias)
-            $location = "$env:HOME/.ssh/config"
-            if (Test-Path $location) {
-                $sshConfig = Get-Content $location
-
-                $inHostBlock = $false
-                foreach ($line in $sshConfig) {
-                    if ($line -match '^\s*Host\s+(\S+)') {
-                        $inHostBlock = ($Matches[1] -eq $SshAlias)
-                    }
-                    elseif ($inHostBlock -and $line -match '^\s*HostName\s+(\S+)') {
-                        return $Matches[1]
-                    }
-                    elseif ($line -match '^\s*$') {
-                        $inHostBlock = $false
-                    }
-                }
-            }
-            return $null
-        }
-
-        function Get-RepoWebUrl {
-            param([string]$RemoteUrl, [string]$Branch)
-            
-            $url = $RemoteUrl -replace 'git@', 'https://' -replace 'http://', 'https://' -replace 'com:', 'com/' -replace 'org:', 'org/'
-            if (-not $url.StartsWith('https://')) {
-                $url = "https://$url"
-            }
-            
-            try {
-                $uri = [uri]::new($url)
-            }
-            catch {
-                # check the ssh profiles for an alias used on the remote
-                if ($RemoteUrl -match '^git@([^:]+):') {
-                    $sshAlias = $Matches[1]
-                    $hostName = Get-SshAliasHostnameUrl -SshAlias $sshAlias
-                    if ($hostName) {
-                        $uri = [uri]::new("https://$hostName/$($RemoteUrl -replace '^git@[^:]+:', '')")
-                    }
-                    else {
-                        Write-Error "Could not resolve SSH alias '$sshAlias' to a hostname."
-                        return $null
-                    }
-                }
-                else {
-                    Write-Error "Invalid remote URL format: $RemoteUrl"
-                    return $null
-                }
-
-            }
-
-            if (-not $uri.Host) {
-                Write-Error "Invalid remote URL format: $RemoteUrl"
-                return $null
-            }
-
-            switch ($uri.Host) {
-                'github.com' {
-                    $path = $uri.AbsolutePath.TrimEnd('.git')
-                    return "https://github.com$path/tree/$Branch"
-                }
-                'bitbucket.org' {
-                    $path = $uri.AbsolutePath.TrimEnd('.git')
-                    return "https://bitbucket.org$path/src/$Branch"
-                }
-                default {
-                    Write-Error "Unsupported Git provider: $($uri.Host)"
-                    return $null
-                }
-            }
-        }
-    }
 
     process {
         $targetUrl = $null
@@ -183,27 +92,28 @@ function Open-GitRepo {
 
         if ($Url) {
             if (-not $usedBranch) { $usedBranch = 'main' }
-            $targetUrl = Get-RepoWebUrl -RemoteUrl $Url -Branch $usedBranch
+            $branch = Get-GitCurrentBranch -DefaultBranch $usedBranch
+
+            $targetUrl = Get-RepoWebUrl -RemoteUrl $Url -Branch $Branch
             if (-not $targetUrl) { return }
         }
         elseif ($Path) {
-            $info = Get-GitRemoteAndBranch -TargetPath $Path
-            if ($info) {
+            $branch = Get-GitCurrentBranch -TargetPath $Path -DefaultBranch $Branch
+            $url = Get-GitRemoteUrl -TargetPath $Path
+            
+            if ($branch -and $url) {
                 $usedBranch = $info.Branch || $usedBranch
-                $targetUrl = Get-RepoWebUrl -RemoteUrl $info.Url -Branch $usedBranch
+                $targetUrl = Get-RepoWebUrl -RemoteUrl $url -Branch $branch
                 if (-not $targetUrl) { return }
             }
-            else { return }
         }
         elseif ($PSItem) {
             if (Test-Path $PSItem -PathType Container) {
-                $info = Get-GitRemoteAndBranch -TargetPath $PSItem
-                if ($info) {
-                    $usedBranch = $info.Branch || $usedBranch
-                    $targetUrl = Get-RepoWebUrl -RemoteUrl $info.Url -Branch $usedBranch
-                    if (-not $targetUrl) { return }
+                $url = Get-GitRemoteUrl -TargetPath $PSItem
+                $branch = Get-GitCurrentBranch -TargetPath $PSItem -DefaultBranch $usedBranch
+                if ($url -and $branch) {
+                    $targetUrl = Get-RepoWebUrl -RemoteUrl $url -Branch $branch
                 }
-                else { return }
             }
             elseif ($PSItem -match '^https?://|git@') {
                 if (-not $usedBranch) { $usedBranch = 'main' }
@@ -216,13 +126,24 @@ function Open-GitRepo {
             }
         }
         else {
-            $info = Get-GitRemoteAndBranch -TargetPath (Get-Location)
-            if ($info) {
-                $usedBranch = $info.Branch || $usedBranch
-                $targetUrl = Get-RepoWebUrl -RemoteUrl $info.Url -Branch $usedBranch
-                if (-not $targetUrl) { return }
+            $url = Get-GitRemoteUrl -TargetPath (Get-Location).Path
+            $branch = Get-GitCurrentBranch -TargetPath (Get-Location).Path -DefaultBranch $usedBranch
+
+            if ([string]::IsNullOrEmpty($url)) {
+                Write-Error "Could not determine a URL for the remote repository. Have you run 'git remote add origin <url>'?"
+                return
             }
-            else { return }
+
+            if ([string]::IsNullOrEmpty($branch)) {
+                Write-Error "Could not determine the current branch. Are you in a git repository?"
+                return
+            }
+            
+            $targetUrl = Get-RepoWebUrl -RemoteUrl $url -Branch $branch
+
+            if (-not $targetUrl) {
+                return
+            }
         }
         if (-not $targetUrl) {
             Write-Error "Could not determine repository URL. Please provide a valid path or URL."
