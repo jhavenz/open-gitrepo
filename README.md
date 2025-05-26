@@ -28,15 +28,15 @@ Install the `Open-GitRepo` module from the PowerShell Gallery:
 Install-Module -Name Open-GitRepo
 ```
 
-## Usage
-
 Import the module within your current PowerShell session:
 
 ```powershell
 Import-Module Open-GitRepo
 ```
 
-_To have this module available in all your PowerShell sessions, you'll want to add it to your PowerShell profile. See the [Automatic Import/Add to PowerShell Profile](#automatic-importadd-to-powershell-profile) section below for details._
+See the [Automatic Import/Add to PowerShell Profile](#automatic-importadd-to-powershell-profile) section below for details.
+
+## Usage
 
 > **A Note On Bitbucket Usage**
 
@@ -89,7 +89,7 @@ Pipeline input can also be used for remote URLs:
 
 ## Automatic Import/Add to PowerShell Profile
 
-To use `Open-GitRepo` without importing it every time, add it to your PowerShell profile:
+To use `Open-GitRepo` without importing it every time, you'll need to add it to your PowerShell profile:
 
 1. Ensure your PowerShell profile exists:
 
@@ -99,17 +99,35 @@ if (-not (Test-Path $PROFILE)) {
 }
 ```
 
-2. Open your profile file in any editor:
+2. Open your profile file in any IDE:
 
 ```powershell
 code $PROFILE
 ```
 
-3. Add this to your profile:
+3. Add this to towards the top of your profile:
 
 ```powershell
 Import-Module Open-GitRepo
 ```
+
+4. Save the file and restart your PowerShell session.
+
+5. Now you automatically have access to the `Open-GitRepo` command without needing to import the module each time.
+
+Try this to verify the module is loaded:
+
+```powershell
+Get-Module -Name Open-GitRepo
+```
+
+Now jump into any directory with a git repo (this module supports GitHub and Bitbucket), and run:
+
+```powershell
+Open-GitRepo
+```
+
+It should open the repository in your default web browser.
 
 ## SSH Config Aliases
 
